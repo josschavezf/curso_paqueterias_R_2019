@@ -1,0 +1,539 @@
+---
+title: "Programación en R e introducción a la escritura de paqueterías"
+subtitle: "<br/>Sesión 01"
+author: "Joselyn Chavez"
+institute: "Twitter @josschavezf1"
+date: "12/7/2019"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: middle, center
+# Estructuras de datos
+
+.left[R opera en estructuras de datos: vectores, matrices, data frames, listas y funciones.]
+
+---
+## Vectores
+Un vector es la estructura de dato más simple en R. Tiene una sola dimensión y debe estar constituido por un solo tipo de dato (numérico, lógico o caracter).
+
+Existen varios tipos de vectores:
+
+- Vector numérico: es una secuencia de números enteros o decimales, positivos o negativos.
+
+```{r}
+x_num <- seq(from = -10, to = 10, by = 2)
+x_num
+```
+
+---
+class: middle
+- Vector aritmético: toma el resultado de una operación aritmética, su valor es numérico o lógico.
+
+```{r}
+x_arit <- log10(x_num)
+x_arit
+```
+
+---
+class: middle
+- Vector lógico: hace una evaluación y regresa TRUE, FALSE, NA, NaN.
+
+```{r}
+x_log <- is.na(x_arit)
+x_log
+```
+
+- Vector caracter
+
+```{r}
+x_chr <- c('a', 'b', 'c', 'd')
+x_chr
+```
+
+---
+# Matrices
+Son arreglos de dos dimensiones con un solo tipo de dato (numérico/caracter). Requieren que los datos a arreglar en la matriz sean suficientes para llenar todos los campos.
+
+```{r}
+matriz1 <- matrix(x_num[-6], nrow = 5)
+matriz1
+matriz2 <- matrix(x_chr, ncol = 2)
+matriz2
+```
+
+---
+# Data frame
+Es un arreglo de datos en forma tabular. Tiene varias propiedades:
+- Cada columna corresponde a un vector con un solo tipo de dato. 
+- Puede poseer columnas con diferentes tipos de valores. 
+- Cada columna tiene un nombre que nos sirve de referencia para llamarla. 
+- Todas las columnas deben tener la misma longitud.
+
+```{r}
+df1 <- data.frame(x_num,x_arit,x_log)
+```
+
+---
+# Listas
+Es un arreglo de datos que pueden ser de diferente estructura (vectores, matrices, df). Los datos pueden tener diferentes dimensiones.
+
+```{r}
+lista <- list(x_num, matriz1, df1)
+```
+
+# Funciones
+Son estructuras que nos ayudan a ejecutar acciones de manera repetitiva. Pueden o no tener parámetros como input.
+
+```{r}
+suma <- function(x,y) { 
+  resultado <- x + y
+  print(resultado)
+}
+
+suma(2,2)
+```
+
+---
+class: middle, center
+# Selección de datos
+
+`attach(iris)`
+
+`View(iris)`
+
+---
+## Selección de columnas de un data.frame
+
+Veamos las especies de flores del set de datos iris
+```{r}
+levels(iris$Species)
+```
+
+O la distribución de medidas del pétalo
+```{r}
+summary(iris$Petal.Length)
+```
+---
+class: middle, center
+Tomemos un momento para hablar sobre el operador pipe 
+# %>%
+`library(magrittr)` o `library(tidyverse)`
+
+---
+Cómo se obtienen los elementos únicos contenidos en un vector?
+```{r}
+x <- iris$Species
+x <- sort(x)
+unique(x)
+```
+
+Utilizando funciones anidadas:
+```{r}
+unique(sort(x))
+```
+
+Usando pipe
+```{r}
+iris$Species %>% sort() %>% unique()
+```
+---
+class: middle, center
+#Cuándo NO usar pipe?
+---
+## Si los pasos del pipe son demasiados
+Usar pipes demasiado largos hace difícil detectar errores. Es mejor crear objectos intermedios que además sean descriptivos sobre el tipo de objeto que se está creando.
+
+## Si tienes múltiples entradas o salidas
+Si necesitas modificar más de un objeto (por ejemplo dos data.frame), entonces no es factible usar este operador.
+
+## Si el producto final es una gráfica con configuraciones complejas
+Si tienes planeado utilizar configuraciones avanzadas para generar una gráfica con tus datos, por ejemplo con ggplot, la estructura del código será confusa. Es mejor generar la gráfica en un paso separado. 
+
+---
+class: middle, center
+# Volvamos con la selección de datos
+---
+## Selección utilizando índices
+```{r}
+levels(iris[5])
+```
+Por qué no funciona? Estamos tomando los datos correctos?
+
+Veamos los datos 
+```{r}
+head(iris[5])
+```
+
+Se ven bien...o no???
+---
+Veamos qué tipo de datos son:
+```{r}
+class(iris[5])
+```
+
+Por qué es data.frame???
+---
+background-image: url("subsetting.png")
+background-position: 50% 50%
+class: bottom, center
+Tomado de [Chapter 4 Subsetting. Advanced R Second ed.](https://adv-r.hadley.nz/subsetting.html) by Hadley Wickham.
+
+---
+class: middle
+
+Entonces lo que hacemos es:
+```{r}
+head(iris[[5]])
+class(iris[[5]])
+levels(iris[[5]])
+```
+Mucho mejor!
+
+---
+## Selección de datos que cumplen con una condición
+
+```{r}
+library(data.table)
+```
+
+Operador %like%
+```{r}
+versicolor <- iris[Species %like% "versi",]
+```
+
+Operador %in%
+```{r}
+especies <- c("setosa","versicolor")
+setosa_versicolor <- iris[Species %in% especies,]
+versicolor <- iris[Species %in% especies[1],]
+```
+
+Selección excluyente
+```{r}
+virginica <- iris[!Species %in% especies,]
+```
+
+---
+## Selección de líneas y columnas
+
+Veamos las columnas 
+```{r}
+colnames(iris)
+```
+
+Selección usando índices
+```{r}
+petalos_setosa <- iris[Species %in% especies[1], 3:4]
+petalos_setosa <- iris[Species %in% especies[1], c(3,5)]
+```
+
+Selección usando el nombre de las columnas
+```{r}
+petalos_setosa <- iris[Species %in% especies[1],
+                       c("Petal.Length","Petal.Width","Species")]
+```
+O mejor así
+```{r}
+columnas <- c("Petal.Length","Petal.Width","Species")
+petalos_setosa <- iris[Species %in% especies[1], columnas ]
+```
+---
+class: middle, center
+# Cómo ordenar datos 
+---
+## Ordenar un vector
+```{r}
+sort(iris$Sepal.Length)
+```
+---
+## Ordenar un data frame 
+```{r}
+plot(Sepal.Length, main = "Sepal length of iris")
+```
+---
+```{r}
+iris[order(Sepal.Length),1] %>% plot(main = "Sepal length of iris")
+```
+Notamos la diferencia?
+---
+background-image: url(https://letsworkcoworking.com/wp-content/uploads/2018/08/letswork-logo-n.png)
+background-position: 50% 25%
+class: middle, center
+Selecciona los datos de Petal.length en el set iris y grafica los datos de manera invertida (de mayor a menor).
+
+---
+class: middle, center
+# Buenas prácticas para escribir funciones
+Basado en [Write your own R functions](https://stat545.com/functions-part1.html) by Jenny Bryan
+
+---
+# Por qué escribir funciones?
+
+Hagamos un ejercicio
+
+Vamos a cargar el set de datos gapminder. 
+```{r}
+library(gapminder)
+```
+
+---
+Para cada continente vamos a obtener el valor máximo de la esperanza de vida
+
+```{r}
+Africa <- gapminder[continent == "Africa","lifeExp"] %>% max()
+Americas <- gapminder[continent == "Americas","lifeExp"] %>% max()
+Asia <- gapminder[continent == "Americas","lifeExp"] %>% max()
+Europe <- gapminder[continent == "Europe","lifeExp"] %>% max()
+Oceania <- gapminder[continent == "Oceania","lifeExp"] %>% max()
+```
+--
+# Alguien lo notó?
+
+---
+# Por qué escribir funciones?
+
+- Reproducibilidad
+--
+
+- Dectectar errores
+--
+
+- Generar un código robusto
+
+---
+class: middle, center
+# Cómo escribo una función?
+---
+background-image: url(https://fastmonkeys.files.wordpress.com/2014/06/how-to-build-a-minimum-viable-product.jpg?w=500&h=421)
+background-position: 50% 50%
+class: bottom, center
+Tomado de [Your ultimate guide to Minimum Viable Product (+great examples)](https://blog.fastmonkeys.com/2014/06/18/minimum-viable-product-your-ultimate-guide-to-mvp-great-examples/)
+
+---
+# Empecemos con la manera más simple
+
+Generemos una función y probemos con un solo set de datos
+```{r}
+max_menos_min <- function(x) { max(x) - min(x) }
+max_menos_min(gapminder$lifeExp)
+```
+--
+Funciona! 
+--
+ ... Seguros?
+--
+
+
+Cuántos datos tenemos?
+```{r}
+length(gapminder$lifeExp)
+```
+---
+# Buena práctica:  
+## Prueba la función con datos conocidos
+```{r}
+max_menos_min(1:10)
+```
+---
+## Ahora sí, comprueba con un set grande de datos
+```{r}
+max(gapminder$lifeExp) 
+min(gapminder$lifeExp)
+max(gapminder$lifeExp) - min(gapminder$lifeExp)
+max_menos_min(gapminder$lifeExp)
+```
+--
+Funciona! 
+--
+ y estamos seguros!
+
+---
+# Buena práctica:  
+## Prueba la función con datos diferentes
+```{r}
+max_menos_min(gapminder$pop)
+```
+
+---
+# Buena práctica:  
+## Prueba cómo se comporta con datos extraños
+```{r}
+# max_menos_min(gapminder)
+# max_menos_min(gapminder$continent)
+```
+
+---
+# Buena práctica:  
+## Asegura que la función falla cuando debe hacerlo
+```{r}
+max_menos_min(c(TRUE,TRUE,FALSE,TRUE,TRUE))
+```
+--
+
+## Qué pasó ?
+--
+
+Los valores lógicos se convierten en 1 y 0, entonces en el vector el valor max_menos_min es 1 - 0 = 1 
+---
+class: middle, center
+# Mejoremos la función
+---
+# Buena práctica:
+## Evalúa los parámetros
+Usemos la estructura stopifnot
+
+```{r}
+max_menos_min <- function(x) {
+  stopifnot(is.numeric(x))
+  max(x) - min(x)
+}
+
+# max_menos_min(c(TRUE,TRUE,FALSE,TRUE,TRUE))
+```
+
+---
+# Expande la función
+Paso 1: genera un forma sencilla
+```{r}
+quantile(gapminder$lifeExp, probs = c(0.25,0.75))
+```
+Paso 2: incluye parámetros definidos fuera de la función
+```{r}
+probabilidad <- c(0.25,0.75)
+quantile(gapminder$lifeExp, probs = probabilidad)
+```
+---
+Paso 3: genera una versión general (no olvides evaluar los parámetros)
+```{r}
+diferencia_quantil <- function(x, probs) {
+  stopifnot(is.numeric(x))
+  quantiles <- quantile(x = x, probs = probs )
+  max_menos_min(quantiles)
+}
+
+diferencia_quantil(gapminder$lifeExp, probabilidad)
+```
+---
+# Qué nombre debe tener la función?
+Sigamos algunas convenciones
+
+## Nombre descriptivo
+Un buen nombre nos indica claramente qué hace la función. Por ejemplo: `max_menos_min()`
+---
+## Con palabras separadas
+Si escribimos maxmenosmin quizá alcanzamos a entenderlo, pero qué tal pruebaaleatoria ??
+
+Las palabras se pueden separar con letras mayúsculas: `maxMenosMin()`
+
+O separar con '_'. Como en max_menos_min()
+
+Esto da la ventaja de autocompletar nombres de funciones relacionadas. Por ejemplo: 
+```{r}
+# geom_bar()
+# geom_point()
+# geom_boxplot()
+```
+
+---
+class: middle, center
+# Qué nombre deben tener los parámetros de la función?
+--
+
+El nombre que el autor decida
+--
+
+# PERO 
+--
+
+Sigamos algunas convenciones
+
+---
+- El primer parámetro suele ser el set de datos y se denota como 'x', por ejemplo: 
+```{r}
+# help("hist")
+```
+--
+
+- Si la función toma dos grupos de datos, el segundo dato se denota con 'y', por ejemplo:
+```{r}
+# help("plot")
+```
+--
+
+- Al igual que el nombre de la función, debe ser descriptivo, como en el caso de probs.
+--
+
+- Si el mismo parámetro se usa en otras funciones, el nombre debe ser consistente.
+
+---
+class: middle, center
+# return() o no return() ? Ese es el dilema
+
+---
+Comparemos
+
+```{r}
+diferencia_quantil <- function(x, probs) {
+  stopifnot(is.numeric(x))
+  quantiles <- quantile(x = x, probs = probs )
+  max_menos_min(quantiles)
+}
+
+diferencia_quantil(gapminder$lifeExp, probabilidad)
+
+diferencia_quantil <- function(x, probs) {
+  stopifnot(is.numeric(x))
+  quantiles <- quantile(x = x, probs = probs )
+  resultado <- max_menos_min(quantiles)
+  return(resultado)
+}
+
+diferencia_quantil(gapminder$lifeExp, probabilidad)
+```
+
+---
+## Cuándo usarlo?
+Cuando escribimos más código después del return( ) o existe una condición para obtener un resultado alternativo.
+
+```{r}
+diferencia_quantil <- function(x, probs) {
+  stopifnot(is.numeric(x))
+  quantiles <- quantile(x = x, probs = probs )
+  if (quantiles[[1]] > 50) {
+    return(quantiles)
+    } else {max_menos_min(quantiles)} 
+}
+
+diferencia_quantil(gapminder$lifeExp, probabilidad)
+diferencia_quantil(gapminder$lifeExp, c(0.5,0.4))
+```
+
+---
+class: middle, center
+# Parámetros con valores default
+---
+Qué pasa si corremos la función sin uno de los parámetros?
+
+``` {r}
+#diferencia_quantil(gapminder$lifeExp)
+```
+--
+Se pueden establecer valores default, estos valores representan las condiciones más comunes en las que se utiliza la función.
+```{r}
+diferencia_quantil <- function(x, probs = c(0.25,0.75)) {
+  stopifnot(is.numeric(x))
+  quantiles <- quantile(x = x, probs = probs )
+  if (quantiles[[1]] > 50) {
+    return(quantiles)
+    } else {max_menos_min(quantiles)} 
+}
+
+diferencia_quantil(gapminder$lifeExp)
+```
+
+
