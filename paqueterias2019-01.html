@@ -4,6 +4,7 @@
     <title>Programación en R e introducción a la escritura de paqueterías</title>
     <meta charset="utf-8" />
     <meta name="author" content="Joselyn Chavez" />
+    <meta name="date" content="2019-12-07" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -15,7 +16,7 @@ class: center, middle, inverse, title-slide
 ## <br/>Sesión 01
 ### Joselyn Chavez
 ### Twitter <span class="citation">@josschavezf1</span>
-### 12/7/2019
+### 12/07/2019
 
 ---
 
@@ -224,6 +225,7 @@ unique(sort(x))
 Usando pipe
 
 ```r
+library(dplyr)
 iris$Species %&gt;% sort() %&gt;% unique()
 ```
 

@@ -3,7 +3,7 @@ title: "Programación en R e introducción a la escritura de paqueterías"
 subtitle: "<br/>Sesión 01"
 author: "Joselyn Chavez"
 institute: "Twitter @josschavezf1"
-date: "12/7/2019"
+date: "12/07/2019"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -139,6 +139,7 @@ unique(sort(x))
 
 Usando pipe
 ```{r}
+library(dplyr)
 iris$Species %>% sort() %>% unique()
 ```
 ---

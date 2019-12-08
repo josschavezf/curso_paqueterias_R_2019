@@ -3,7 +3,7 @@ title: "Programación en R e introducción a la escritura de paqueterías"
 subtitle: "<br/>Sesión 02"
 author: "Joselyn Chavez"
 institute: "Twitter @josschavezf1"
-date: "12/7/2019"
+date: "12/08/2019"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -17,6 +17,226 @@ class: middle, center
 # Repositorios
 
 ---
-# CRAN
+# CRAN (The Comprehensive R Archive Network)
+
+Este repositorio contiene 15319 paquetes actualmente.
+
+Incluye los paquetes de R base.
+
+Los paquetes depositados en CRAN están clasificados en 40 tópicos de acuerdo con el área en la que se enfocan sus funciones.
+
+Podemos ver la lista de paqueterías y tópicos en:
+https://cran.r-project.org
+---
+## Algunos tópicos:
+
+- Finanzas
+- Economía
+- Manejo de bases de datos
+- Matemáticas
+- Estadística
+- Genética
+- Graficación
+- Farmacocinética
+- Ciencias Sociales
+- Tecnología
+
+---
+# Cómo instalar paqueterías de CRAN
+
+El instalador de paqueterías de CRAN está en incluido en las funciones de R base
+
+Usamos la función
+
+```{r}
+# install.packages()
+```
+
+Por ejemplo
+
+```{r}
+# install.packages("ggplot2")
+```
+
+O en RStudio vamos a la ventana Packages, buscamos el paquete y seleccionamos Install
+
+---
+# Bioconductor
+
+Bioconductor posee paqueterías enfocadas al análisis de datos genómicos y de secuenciación.
+
+Actualmente contiene 1823 paquetes. Hay dos actualizaciones al año para añadir nuevas paqueterías o actualizaciones de las existentes.
+
+Podemos ver los paquetes de Bioconductor en https://www.bioconductor.org
+
+Existe una conferencia anual donde se reúnen los desarrolladores para presentar sus paqueterías. Puedes ver la página de la conferencia 2019 en http://bioc2019.bioconductor.org
+
+---
+# Cómo instalar paquetes de Bioconductor
+
+Para utilizar este repositorio es necesario hacer una instalación 
+```{r}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+# BiocManager::install(version = "3.10")
+```
+
+Una vez que se ha instalado Bioconductor, podemos instalar paqueterías usando la función
+```{r}
+# BiocManager::install("Biostrings")
+```
+---
+# Para ver las paqueterías disponibles en Bioconductor desde la consola
+
+Este comando muestra la lista completa
+```{r}
+# BiocManager::available()
+```
+
+También se puede filtrar la búsqueda usando un patrón deseado
+```{r}
+# BiocManager::available("seq")
+```
+
+---
+# Por qué usar BiocManager ?
+
+Las paqueterías de Bioconductor también se pueden encontrar con la función install.packages( ) sin embargo, puede existir una falta de actualización en los paquetes que se encuentran disponibles. 
+
+Actualizar de manera periódica la versión de BiocManager y usar BiocManager::install( ) es la mejor manera de mantener actualizada la lista de paqueterías y encontrar la que estamos buscando.
+
+## Nota importante 
+Las versiones actuales de BiocManager también requieren que mantengamos actualizada nuestra versión de R.
+
+---
+class: middle, center
+#  Por qué y cuándo escribir paqueterías ?
+Basado en la ponencia del Dr. Alejandro Reyes (CDSB México 2019)
+
+---
+class: middle, center
+# Qué es un paquete?
+Un paquete es un directorio con funciones o código organizado y documentado.
+
+---
+class: middle, center
+# Ventajas de hacer un paquete
+Te obliga a organizar y transformar tu código en funciones.
+
+---
+class: middle, center
+_"No matter how awesome your method is, if you don’t provide a good software implementation, no one will use it"_
+
+---
+background-image: url("estadistica.png")
+background-position: 50% 80%
+class: upper, center
+Korthauer,Kimes, et al. _Genome Biology_, 2019.
+
+---
+class: middle, center
+# Ventajas de hacer un paquete
+Si el método que necesitas no existe o los métodos existentes tienen deficiencias, puedes generar tu propio método.
+
+---
+background-image: url("Brooks.png")
+background-position: 50% 50%
+---
+background-image: url("Reyes.png")
+background-position: 50% 50%
+
+---
+class: middle, center
+# Ventajas de hacer un paquete
+Hace que el análisis de datos sea transparente y reproducible para la publicación de resultados.
+
+---
+background-image: url("reproducible.png")
+background-position: 50% 50%
+
+---
+class: middle, center
+# Ventajas de hacer un paquete
+Haces tu código disponible para que otros lo usen sin hacer copiado y pegado.
+---
+background-image: url("matrix.png")
+background-position: 50% 50%
+
+---
+class: middle, center
+# Hablemos sobre los proyectos de RStudio
+3 ventajas de usar proyectos
+---
+background-image: url("proyectos.png")
+background-position: 50% 50%
+---
+background-image: url("proyectos1.png")
+background-position: 50% 50%
+---
+background-image: url("proyectos2.png")
+background-position: 50% 50%
+---
+background-image: url("proyectos3.png")
+background-position: 50% 50%
+
+---
+class: middle, center
+#  Cómo escribir paqueterías?
+
+---
+# Empecemos un paquete nuevo
+
+```{r}
+# library(devtools)
+# usethis::create_package("~/Documents/mipaquete")
+```
+
+# Qué archivos se crearon?
+
+---
+# Para agregar un script
+
+```{r}
+# usethis::use_r("max_menos_min")
+```
+
+Escribamos una función max_menos_min
+---
+# Cargar las funciones
+```{r}
+# devtools::load_all()
+```
+---
+# Usar las funciones cargadas
+```{r}
+# mipaquete::max_menos_min(1:10)
+```
+
+---
+# Elementos útiles de programación: 
+
+- condicional if
+
+- ciclo for
+
+- ciclo while
+
+---
+# Escribe tu propia función
+
+Algunas propuestas:
+
+- Una función que nos diga si al introducir una secuencia como input es DNA o RNA (Pista: existe un vector 'letters')
+
+- Una función que evalúe si una secuencia de nucleótidos es mayor a cierta longitud y si es verdadero haga la traducción a aminoácidos (Pista: usa el paquete Biostrings para traducir).
+
+- Una función que tome cualquier vector como input y ofrezca las opciones para obtener una gráfica de puntos, un histograma o ambos.
+
+## Recuerda evaluar los parámetros de entrada y establece si es necesario poner parámetros con valores default
+
+---
+# Tarea para la semana
+
+Piensa en un problema que te gustaría resolver relacionado con tu área de trabajo (no importa lo simple que pueda parecer) y escribe una función que te ayude a solucionarlo.
 
 
