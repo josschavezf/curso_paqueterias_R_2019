@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Programación en R e introducción a la escritura de paqueterías</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joselyn Chavez" />
+    <meta name="date" content="2019-12-14" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Programación en R e introducción a la escritura de paqueterías
+## <br/>Sesión 03
+### Joselyn Chavez
+### Twitter <span class="citation">@josschavezf1</span>
+### 12/14/2019
+
+---
+
+
+class: middle, center
+# Metadatos de una paquetería
+Basado en el libro _R Packages_ de Hadley Wickham.
+
+---
+Los metadatos de la paquetería se encuentran en el archivo DESCRIPTION.
+
+## Description
+El campo Description describe lo que hace tu paquetería. Suele ser extenso, por lo que es importante tener en cuenta que si se necesitan escribir múltiples líneas deben estar indentadas. Por ejemplo:
+
+
+```r
+# Description: Este paquete contiene todas las funciones generadas en el curso 
+#   de escritura de paqueterías en R. También contiene las funciones que cada 
+#   participante propuso para solucionar un problema relacionado con su trabajo.
+```
+
+---
+## Dependencies
+
+Las dependencias son las paqueterías que tu paquete necesita para funcionar. La lista de paquetes se escribe separada por comas y es recomendado que se escriban en orden alfabético.
+
+Existen tres tipos:
+
+- Imports: Son paquetes que deben instalarse para que tu paquete funcione y por tanto se van a instalar en el momento que instales el paquete. Internamente existe una función que evalúa si los paquetes se encuentran instalados o no y solamente instala los faltantes. 
+
+Esta dependencia hace solamente la instalación pero no ejecuta library(), por lo que los paquetes requeridos deberán ser cargados dentro de la escritura del paquete.
+---
+- Depends: Son paquetes que obligatoriamente deben estar para que tu paquetería funcione pero no se instalarán de manera automática. Aquí también se indica la versión de R requerida para el funcionamiento del paquete. Los paquetes que se listen aquí se van a cargar al mismo tiempo que se ejecute el library(mipaquete).
+
+- Suggests: Se refiere a los paquetes que tu paquete puede utilizar y aprovechar para ser más poderoso en el análsis pero no los necesita para funcionar. Por ejemplo, paquetes que contienen sets de datos para hacer pruebas o análisis de práctica.
+
+---
+## Nota Importante
+
+Es más recomendado listar los paquetes necesarios para el funcionamiento de nuestro paquete en _Imports_ porque cuando se ponen en _Depends_ se cargan los paquetes completos y probablemente solamente requerimos una o dos funciones. 
+
+Cargar demasiados paquetes completos, sin ser necesario, sólo hace que nuestro paquete se vuelva pesado y lento. Es mejor llamar particularmente a las funciones usando la sintaxis explícita:
+
+
+```r
+# Biostrings::translate()
+```
+
+---
+## Cómo añadir dependencias?
+
+- La forma más recomendada:
+
+```r
+# usethis::use_package("ggplot2", type = "Imports")
+```
+
+- Editando manualmente el archivo DESCRIPTION. 
+
+---
+# Licencias: quién puede usar tu paquete
+Existen diversas liencias pero hablaremos sobre las 3 más comunes:
+
+- MIT (Massachusetts Institute of Technology): es simple y permisiva. Permite a cualquier persona usar y distribuir tu paquetería con una sola restricción: la distribución debe incluir la declaración de licencia del autor. Existe un texto base al cual se le pueden añadir cláusulas o excepciones. Este es un ejemplo:
+
+---
+background-image: url("MIT.png")
+background-position: 50% 50%
+
+---
+- GPL-2 (General Public License): Permite usar y distribuir tu código con la condición que si se genera una versión modificada de tu código, su distribución debe ser también bajo esta licencia. Aunque está enfocada a la distribución de código abierto, permite dejar en claro quién es el autor del material y evitar la apropiación del código por terceros. Un ejemplo de la aplicación de esta licencia es el desarrollo de Linux.
+
+- CCO: Esta licencia implica que cedes todos los derechos y el código puede ser utilizado con cualquier fin, excepto fines comerciales. Es el más utilizado en los paquetes. Concede el derecho a utilizar y distribuir el material sin requerir el permiso del autor.
+
+---
+class: middle, center
+# Documentación de funciones
+
+---
+La documentación es la información que se muestra cuando consultamos _help(mifuncion)_ o _?mifuncion_ .
+
+Es uno de los aspectos más importantes en las paqueterías.
+
+Generar una buena documentación no sólo ayuda a los usuarios potenciales sino a tu "yo del futuro" porque te permitirá recordar cuál es la finalidad de tu función y cuáles son sus elementos importantes.
+
+La documentación se puede mostrar en formato html, texto plano o pdf. Estos archivos de ayuda se guardan en la carpeta _man_ en formato _.Rd_. Los archivos pueden generarse manualmente pero para mayor comodidad usaremos el paquete _roxygen2_.
+
+---
+## Cómo generamos el archivo Rd ?
+
+- Agrega un comentario de tipo roxygen en el script de la función.
+- Corre el comando 
+
+```r
+# devtools::document()
+```
+Este comando llama internamente a la función 
+
+```r
+# roxygen2::roxygenise()
+```
+- Ejecuta el comando _Install and Restart_
+- Revisa la documentación con _?funcion_.
+
+---
+## Comentarios de roxygen
+
+Siempre se comienza la línea con #' 
+Cada tipo de comentario inicia con @
+
+- title: Describe en una frase corta lo que hace la función.
+- description: Describe de forma corta pero con mayor detalle la utilidad de la función.
+- param: Cada parámetro que la función toma como entrada, por ejemplo los datos a procesar.
+- return: Dice qué tipo de dato arroja la función como salida. Por ejemplo, un vector o un data.frame.
+- examples: Son ejemplos de uso.
+- export: agregar este comentario hace que la función sea disponible para los usuarios. Si no se coloca, la función queda definida internamente para usarla en otras funciones del paquete pero no se puede consultar.
+
+---
+background-image: url("roxygen.png")
+background-position: 50% 50%
+
+---
+class: middle, center
+# Viñetas
+
+---
+Una viñeta es una guía extendida sobre cómo funciona el paquete. Es recomendable que muestre cómo utilizar las funciones del paquete, aplicado en un flujo de trabajo; por ejemplo: el análisis estadístico de una encuesta o el análsis de expresión diferencial de genes.
+
+Podemos estructurarlo como haríamos con la escritura de un capítulo de libro o de un artículo científico: debe mostrar el problema a resolver y la metodología paso a paso sobre cómo el paquete lo resuelve.
+
+Si el paquete contiene funciones que se complementan entre sí para alcanzar un fin específico, entonces debes mostrar su uso de forma compartamentalizada.
+
+---
+## Cómo consultar la viñeta de un paquete?
+
+
+```r
+# browseVignettes(package = "ggplot2")
+```
+---
+## Cómo crear una viñeta?
+
+
+```r
+# usethis::use_vignette("mi_vignette")
+```
+
+Esta función tendrá tres efectos:
+
+- Generar el directorio vignettes.
+- Agregar dependencias en el archivo DESCRIPTION (por ejemplo, _knitr_ necesario para construir viñetas dentro del paquete).
+- Abrir un templado en formato .Rmd para comenzar a escribir la viñeta, que se va a guardar en vignettes/mi_vignette.Rmd
+
+---
+## Cómo guardar y actualizar la viñeta?
+
+Una vez que se ha generado el archivo vignettes/mi_vignette.Rmd se hacen las modificaciones necesarias. Puedes usar el comando 
+
+```r
+# edit_file("vignettes/mi_vignette.Rmd")
+```
+
+Para guardar los cambios debes hacer click en el botón Knit o utiliza la combinación de teclas Ctrl/Cmd-Shift-K.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

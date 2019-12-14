@@ -1,0 +1,24 @@
+---
+title: "Programación en R e introducción a la escritura de paqueterías"
+subtitle: "<br/>Sesión 04"
+author: "Joselyn Chavez"
+institute: "Twitter @josschavezf1"
+date: "12/15/2019"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+class: middle, center
+# Evaluación de funciones
+
+---
+background-image: url("m.png")
+background-position: 50% 50%
+
+
+
