@@ -17,8 +17,98 @@ class: middle, center
 # Evaluación de funciones
 
 ---
-background-image: url("m.png")
+Generalmente, el flujo de trabajo es:
+
+- Escribir una función
+- Cargar la función con devtools::load_all()
+- Experimentar en la consola para ver si funciona
+- Repetir el proceso con cada función
+---
+background-image: url("pruebas1.png")
+background-position: 50% 50%
+---
+background-image: url("pruebas2.png")
 background-position: 50% 50%
 
+---
+# Cuáles son las ventajas?
 
+- Menos errores: Si ya sabemos cómo se debe comportar la función, entonces tendrás menos _bugs_ o errores. En cierta forma se está describiendo el comportamiento deseado de tu función en dos secciones: el código y las unidades de prueba, de manera que una se puede contrastar con la otra.
 
+- Mejor estructura en el código. El código que es fácil de probar suele tener mejor estructura. Esto es porque cuando cambias el código complicado y confuso por secciones individuales y seriadas, el código se vuelve fácil de probar y de entender. Esto también reduce la duplicación de código.
+---
+- Es más fácil retomar la escritura del código. Si cada vez que terminas de escribir una sección de la función se diseña una unidad de prueba, entonces es más fácil continuar con las tareas pendientes, porque ya sabes que el paso anterior funciona.
+
+- Código robusto. Si sabes que tus funciones están asociadas a una unidad de prueba, puedes sentirte seguro al hacer cambios importantes en el paquete sin preocuparte de que el código se _rompa_ porque siempre puedes regresar a la evaluación.
+
+---
+# Cómo se generan las unidades de prueba?
+
+Usemos la forma más segura y cómoda
+```{r}
+# usethis::use_testthat()
+```
+
+Se efectuaron tres cambios:
+
+- Se generó una carpeta tests/testthat
+- Se agregó el paquete testthat en la sección _Suggests_ de DESCRIPTION
+- Se generó el archivo test/testthat.R que efectúa todos los test o pruebas del paquete.
+
+---
+# Cómo escribir una prueba? 
+
+Se genera un archivo de prueba por función que se va a guardar en el carpeta testthat. Para abrirlo ejecutamos el siguiente comando mientras tenemos abierto el script de la función.
+```{r}
+# usethis::use_test()
+```
+
+Noten que el archivo que se generó comienza con test-(nombre de la función).R
+
+---
+Ahora escribamos pruebas para la función
+
+Siempre deben escribirse con la función test_that( ).
+
+Entre comillas se escribe el nombre de la prueba, que detalla el aspecto que se está evaluando.
+
+Cuando estemos listos para evaluar usamos:
+```{r}
+# devtools::test()
+```
+
+Revisamos que hayan aprobado todas las pruebas, si no es así, corregimos y volvemos a evaluar hasta que pasen todas la pruebas.
+
+---
+# Expectations
+
+# expect_equal
+Para evaluar equivalencia numérica
+```{r}
+# expect_equal(2+2, 4)
+```
+
+# expect_match
+Para evaluar igualdad de caracteres
+```{r}
+# texto <- "La prueba funciona!"
+# expect_match(texto, "funciona")
+```
+---
+# expect_output
+Evalúa la impresión de una salida
+```{r}
+# x <- list(1:10, letters)
+# expect_output(str(x), "List of 2")
+```
+
+# expect_warning
+Evalúa la impresión de una advertencia
+```{r}
+# expect_warning(log(-1), "NaNs produced")
+```
+
+# expect_error
+```{r}
+# expect_error(1/"a", "non-numeric argument" )
+```

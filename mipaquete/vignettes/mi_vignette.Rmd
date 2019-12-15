@@ -1,0 +1,43 @@
+---
+title: "mi_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mi_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(mipaquete)
+```
+
+Este paquete contiene las funciones de ejemplo del curso de programación en R
+
+```{r}
+numeros <- seq(1:10)
+max_menos_min(numeros)
+```
+
+Con la función evalua_seq podemos evaluar si una secuencia es DNA o RNA
+
+```{r}
+secuencia <- "attatatctcgggttt"
+evalua_secuencia(secuencia)
+```
+
+
+
+
+
+
+
+
+
+

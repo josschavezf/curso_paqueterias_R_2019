@@ -7,6 +7,17 @@ Authors@R:
            role = c("aut", "cre"),
            email = "joselynchavezf@gmail.com")
 Description: Este paquete contiene las funciones desarrolladas durante el curso RUNA diciembre 2019.
-License: What license it uses
+Depends: 
+    data.table,
+    ggplot2
+License: CCO
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    ggplot2
+RoxygenNote: 7.0.2
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 2.1.0)
+VignetteBuilder: knitr
