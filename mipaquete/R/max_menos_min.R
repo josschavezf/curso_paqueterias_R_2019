@@ -8,4 +8,7 @@
 #' max_menos_min(x_num)
 #' @export
 
-max_menos_min <- function(x) {max(x) - min(x)}
+max_menos_min <- function(x) {
+  stopifnot(is.numeric(x))
+  max(x) - min(x)
+}
